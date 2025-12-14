@@ -10,21 +10,21 @@ export const WORKFLOW_STAGES = [
 ] as const;
 
 export const STATUS_COLORS = {
-  in_progress: "bg-blue-500",
-  awaiting_review: "bg-yellow-500",
-  approved: "bg-green-500",
-  rejected: "bg-destructive",
-  error: "bg-destructive",
+  in_progress: "bg-status-in-progress",
+  awaiting_review: "bg-status-awaiting-review",
+  approved: "bg-status-approved",
+  rejected: "bg-status-rejected",
+  error: "bg-status-error",
 } as const;
 
 export const STAGE_COLORS = {
-  initializing: "text-muted-foreground",
-  drafting: "text-blue-500",
-  safety_review: "text-orange-500",
-  clinical_review: "text-purple-500",
-  revising: "text-yellow-500",
-  finalizing: "text-cyan-500",
-  human_review: "text-amber-500",
-  approved: "text-green-500",
-  rejected: "text-destructive",
+  initializing: "text-stage-initializing",
+  drafting: "text-stage-drafting",
+  safety_review: "text-stage-safety-review",
+  clinical_review: "text-stage-clinical-review",
+  revising: "text-stage-revising",
+  finalizing: "text-stage-finalizing",
+  human_review: "text-stage-human-review",
+  approved: "text-stage-approved",
+  rejected: "text-stage-rejected",
 } as const;

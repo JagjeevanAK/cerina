@@ -2,7 +2,7 @@
 
 import { Shield, Heart, RefreshCw, FileText, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 interface QualityScoresProps {
   safetyScore: number | null;

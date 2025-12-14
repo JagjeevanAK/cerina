@@ -90,6 +90,30 @@
   --sidebar-accent-foreground: oklch(0.9243 0.1151 95.7459);
   --sidebar-border: oklch(0.3715 0 0);
   --sidebar-ring: oklch(0.7686 0.1647 70.0804);
+  
+  /* Status Colors - Dark Mode */
+  --status-in-progress: oklch(0.6961 0.1618 254.6244);
+  --status-awaiting-review: oklch(0.7487 0.1514 89.8726);
+  --status-approved: oklch(0.7419 0.1651 145.5029);
+  --status-rejected: var(--destructive);
+  --status-error: var(--destructive);
+  
+  /* Stage Colors - Dark Mode */
+  --stage-initializing: var(--muted-foreground);
+  --stage-drafting: oklch(0.6961 0.1618 254.6244);
+  --stage-safety-review: oklch(0.8191 0.1686 51.6950);
+  --stage-clinical-review: oklch(0.7339 0.1752 325.6289);
+  --stage-revising: oklch(0.7487 0.1514 89.8726);
+  --stage-finalizing: oklch(0.8191 0.1449 205.0858);
+  --stage-human-review: oklch(0.8191 0.1686 51.6950);
+  --stage-approved: oklch(0.7419 0.1651 145.5029);
+  --stage-rejected: var(--destructive);
+  
+  /* Semantic UI Colors - Dark Mode */
+  --warning: oklch(0.8191 0.1686 51.6950);
+  --info: oklch(0.6961 0.1618 254.6244);
+  --success: oklch(0.7419 0.1651 145.5029);
+  
   --radius: 0.375rem;
   --shadow-x: 0px;
   --shadow-y: 4px;
@@ -140,6 +164,29 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  
+  /* Status Colors */
+  --color-status-in-progress: var(--status-in-progress);
+  --color-status-awaiting-review: var(--status-awaiting-review);
+  --color-status-approved: var(--status-approved);
+  --color-status-rejected: var(--status-rejected);
+  --color-status-error: var(--status-error);
+  
+  /* Stage Colors */
+  --color-stage-initializing: var(--stage-initializing);
+  --color-stage-drafting: var(--stage-drafting);
+  --color-stage-safety-review: var(--stage-safety-review);
+  --color-stage-clinical-review: var(--stage-clinical-review);
+  --color-stage-revising: var(--stage-revising);
+  --color-stage-finalizing: var(--stage-finalizing);
+  --color-stage-human-review: var(--stage-human-review);
+  --color-stage-approved: var(--stage-approved);
+  --color-stage-rejected: var(--stage-rejected);
+  
+  /* Semantic UI Colors */
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-success: var(--success);
 
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);

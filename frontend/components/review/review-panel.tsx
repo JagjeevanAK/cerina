@@ -10,7 +10,7 @@ import { QualityScores } from "./quality-scores";
 import { DraftViewer } from "./draft-viewer";
 import { AgentNotes } from "./agent-notes";
 import type { DraftForReview, ReviewRequest, ReviewDecision } from "@/types/session";
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 interface ReviewPanelProps {
   draft: DraftForReview;

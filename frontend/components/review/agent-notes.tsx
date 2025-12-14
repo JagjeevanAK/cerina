@@ -3,7 +3,7 @@
 import { AlertTriangle, AlertCircle, Info, CheckCircle, MessageSquareText } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 interface AgentNote {
   agent_id: string;

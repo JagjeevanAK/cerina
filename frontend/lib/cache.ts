@@ -1,14 +1,3 @@
-/**
- * Simple in-memory cache with TTL support for stable/approved data only.
- * 
- * IMPORTANT: Only cache data that is stable and won't change frequently.
- * - Exercises (approved, stable)
- * 
- * DO NOT cache:
- * - Sessions list (changes frequently)
- * - Session details (live updates via SSE)
- * - Draft data (changes during review)
- */
 
 interface CacheEntry<T> {
   data: T;

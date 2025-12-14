@@ -221,7 +221,7 @@ export default function ExerciseDetailPage({ params }: PageProps) {
             <ul className="space-y-2">
               {exercise.safety_notes.map((note, index) => (
                 <li key={index} className="flex items-start gap-2 text-sm">
-                  <AlertTriangle className="h-4 w-4 text-orange-500 shrink-0 mt-0.5" />
+                  <AlertTriangle className="h-4 w-4 text-warning shrink-0 mt-0.5" />
                   <span>{note}</span>
                 </li>
               ))}

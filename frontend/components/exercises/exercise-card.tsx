@@ -49,13 +49,13 @@ export function ExerciseCard({ exercise }: ExerciseCardProps) {
           <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
             {exercise.steps && exercise.steps.length > 0 && (
               <div className="flex items-center gap-1">
-                <ListChecks className="h-3 w-3 text-amber-500" />
+                <ListChecks className="h-3 w-3 text-warning" />
                 <span>{exercise.steps.length} steps</span>
               </div>
             )}
             {exercise.safety_notes && exercise.safety_notes.length > 0 && (
               <div className="flex items-center gap-1">
-                <AlertTriangle className="h-3 w-3 text-orange-500" />
+                <AlertTriangle className="h-3 w-3 text-warning" />
                 <span>{exercise.safety_notes.length} safety notes</span>
               </div>
             )}
