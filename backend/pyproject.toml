@@ -1,7 +1,7 @@
 [project]
 name = "backend"
 version = "0.1.0"
-description = "Add your description here"
+description = "CBT Clinical Review API Backend"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
@@ -9,6 +9,24 @@ dependencies = [
     "fastapi>=0.124.2",
     "psycopg2-binary>=2.9.11",
     "pydantic>=2.12.5",
-    "sqlalchemy>=2.0.45",
+    "pydantic-settings>=2.7.0",
+    "sqlalchemy[asyncio]>=2.0.45",
+    "asyncpg>=0.30.0",
     "uvicorn>=0.38.0",
+    "sse-starlette>=2.2.0",
+    "structlog>=24.4.0",
+    "python-dotenv>=1.0.0",
+    # Agent dependencies (needed for graph_service imports)
+    "langchain>=0.3.14",
+    "langchain-anthropic>=0.3.0",
+    "langchain-openai>=0.3.0",
+    "langgraph>=0.2.60",
+    "langgraph-checkpoint-postgres>=2.0.0",
+    "psycopg[binary,pool]>=3.2.0",
 ]
+
+[project.scripts]
+cbt-backend = "src.main:main"
+
+[tool.uv]
+package = true
