@@ -1,0 +1,68 @@
+# Git
+.git
+.gitignore
+
+# Environment files (secrets should be passed via docker-compose or env)
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# Node.js / Frontend
+node_modules/
+.next/
+out/
+.turbo/
+*.tsbuildinfo
+.npm/
+.pnpm-store/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose*.yml
+!docker-compose.yml
+
+# Documentation
+*.md
+!README.md
+docs/
+
+# Testing
+coverage/
+.coverage
+htmlcov/
+.nyc_output/
+
+# Logs
+*.log
+logs/
+
+# Misc
+*.bak
+*.tmp
+.cache/

@@ -1,0 +1,87 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: cerina-postgres
+    environment:
+      POSTGRES_USER: cerina
+      POSTGRES_PASSWORD: cerina_dev_password
+      POSTGRES_DB: cerina
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cerina -d cerina"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cerina-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend.dockerfile
+    container_name: cerina-backend
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://cerina:cerina_dev_password@postgres:5432/cerina
+      - AGENTS_DATABASE_URL=postgresql://cerina:cerina_dev_password@postgres:5432/cerina
+      - CORS_ORIGINS=["http://localhost:3000","http://frontend:3000"]
+      - DEBUG=false
+      - LOG_LEVEL=INFO
+      # LLM settings - pass from host environment or .env file
+      - LLM_PROVIDER=${LLM_PROVIDER:-anthropic}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - ANTHROPIC_MODEL=${ANTHROPIC_MODEL:-claude-sonnet-4-20250514}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o}
+      - OPENROUTER_MODEL=${OPENROUTER_MODEL:-anthropic/claude-sonnet-4-20250514}
+      # LangSmith (optional)
+      - LANGCHAIN_TRACING_V2=${LANGCHAIN_TRACING_V2:-false}
+      - LANGCHAIN_API_KEY=${LANGCHAIN_API_KEY}
+      - LANGCHAIN_PROJECT=${LANGCHAIN_PROJECT:-cerina-cbt-agents}
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      start_period: 10s
+      retries: 3
+    networks:
+      - cerina-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend.dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+    container_name: cerina-frontend
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      start_period: 10s
+      retries: 3
+    networks:
+      - cerina-network
+
+volumes:
+  postgres_data:
+
+networks:
+  cerina-network:
+    driver: bridge
