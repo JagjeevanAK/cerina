@@ -54,7 +54,6 @@ async def lifespan(app: FastAPI):
     """Application lifespan handler."""
     logger = structlog.get_logger(__name__)
 
-    # Startup
     setup_logging()
     logger.info("application_starting")
 
@@ -63,7 +62,6 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    # Shutdown
     await close_db()
     logger.info("application_shutdown")
 
@@ -81,7 +79,6 @@ def create_app() -> FastAPI:
         redoc_url="/redoc" if settings.debug else None,
     )
 
-    # CORS middleware
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
@@ -90,7 +87,6 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    # Include API router
     app.include_router(api_router, prefix=settings.api_prefix)
 
     @app.get("/health")
@@ -101,16 +97,12 @@ def create_app() -> FastAPI:
     return app
 
 
-# Create app instance
 app = create_app()
 
 
 def main():
     """Main entry point for running the server."""
     settings = get_settings()
-    # Note: reload=False because agents/src namespace conflicts with backend/src
-    # in subprocess spawning. For hot reload during development, use:
-    # uvicorn src.main:app --reload --reload-dir src
     uvicorn.run(
         "src.main:app",
         host="0.0.0.0",

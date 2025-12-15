@@ -15,7 +15,7 @@ settings = get_settings()
 
 engine = create_async_engine(
     settings.database_url,
-    echo=False,  # Disable SQL query logging
+    echo=False,
     pool_pre_ping=True,
     pool_size=5,
     max_overflow=10,

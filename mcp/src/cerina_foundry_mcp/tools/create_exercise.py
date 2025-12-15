@@ -33,15 +33,12 @@ async def create_cbt_exercise(
     )
 
     try:
-        # Create the session
         session = await client.create_session(description, exercise_type_hint)
         session_id = str(session.session_id)
 
-        # Poll for completion
         for attempt in range(settings.max_poll_attempts):
             state = await client.get_session(session_id)
 
-            # Check for error state
             if state.status == "error":
                 return [
                     TextContent(
@@ -50,7 +47,6 @@ async def create_cbt_exercise(
                     )
                 ]
 
-            # Check if awaiting human review
             if state.awaiting_human_input:
                 if should_auto_approve:
                     # Auto-approve in MCP bypass mode
@@ -62,9 +58,7 @@ async def create_cbt_exercise(
                             reviewer_id="mcp-auto",
                         ),
                     )
-                    # Continue polling for final result
                 else:
-                    # Return review-needed status
                     draft = await client.get_draft(session_id)
                     return [
                         TextContent(
@@ -73,7 +67,6 @@ async def create_cbt_exercise(
                         )
                     ]
 
-            # Check for terminal states
             if state.workflow_stage in ("approved", "rejected"):
                 if state.final_exercise:
                     return [
@@ -90,10 +83,8 @@ async def create_cbt_exercise(
                         )
                     ]
 
-            # Wait before polling again
             await asyncio.sleep(settings.poll_interval)
 
-        # Timeout
         return [
             TextContent(
                 type="text",
@@ -128,7 +119,6 @@ def _format_exercise(exercise: dict[str, Any]) -> str:
             step_text = f"{i}. {step.get('description', '')}"
             parts.append(step_text)
             if step.get("anxiety_rating") is not None:
-                # SUDS (Subjective Units of Distress Scale) is 0-100
                 rating = step["anxiety_rating"]
                 parts.append(f"   - SUDS Anxiety Level: {rating}/100")
             if step.get("duration_minutes"):

@@ -48,7 +48,6 @@ def get_llm(
     elif settings.llm_provider == "openrouter":
         from langchain_openai import ChatOpenAI
 
-        # OpenRouter uses OpenAI-compatible API
         default_headers = {
             "HTTP-Referer": settings.openrouter_site_url or "https://github.com/cerina",
             "X-Title": settings.openrouter_app_name,

@@ -34,7 +34,6 @@ async def get_session_status(session_id: str) -> list[TextContent]:
             "",
         ]
 
-        # Quality Metrics
         qm = state.quality_metrics
         lines.extend([
             "## Quality Metrics",
@@ -47,7 +46,6 @@ async def get_session_status(session_id: str) -> list[TextContent]:
             "",
         ])
 
-        # Scratchpad Summary
         if state.scratchpad_summary:
             lines.append("## Agent Notes Summary")
             lines.append("")
@@ -61,7 +59,6 @@ async def get_session_status(session_id: str) -> list[TextContent]:
                     lines.append(f"- Last Action: {sp.last_action}")
                 lines.append("")
 
-        # Final Exercise
         if state.final_exercise:
             lines.extend([
                 "## Final Exercise",
@@ -71,7 +68,6 @@ async def get_session_status(session_id: str) -> list[TextContent]:
                 "",
             ])
 
-        # Timestamps
         lines.extend([
             "## Timestamps",
             "",

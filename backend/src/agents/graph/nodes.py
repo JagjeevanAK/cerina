@@ -18,7 +18,6 @@ from src.agents.state.graph_state import GraphState
 
 logger = structlog.get_logger(__name__)
 
-# Singleton agent instances
 _agents: dict[str, Any] = {}
 
 
@@ -305,7 +304,6 @@ async def human_review_node(state: GraphState) -> dict[str, Any]:
             "awaiting_human_input": False,
         }
 
-    # Default to awaiting review
     return {
         "awaiting_human_input": True,
         "human_review": {

@@ -13,7 +13,6 @@ from src.agents.config.settings import Settings, get_settings
 
 logger = structlog.get_logger(__name__)
 
-# Global connection pool
 _pool: AsyncConnectionPool | None = None
 _setup_done: bool = False
 

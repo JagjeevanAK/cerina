@@ -83,7 +83,6 @@ class SessionService:
         if status:
             query = query.where(CBTSession.status == status)
 
-        # Get total count
         count_query = select(func.count()).select_from(CBTSession)
         if status:
             count_query = count_query.where(CBTSession.status == status)

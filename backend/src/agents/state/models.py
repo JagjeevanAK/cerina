@@ -8,10 +8,6 @@ from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
 
-
-# ============== Agent Scratchpad Notes ==============
-
-
 class AgentNote(BaseModel):
     """Individual note from an agent's review."""
 
@@ -49,9 +45,6 @@ class AgentScratchpad(BaseModel):
         )
         self.notes.append(note)
         return note
-
-
-# ============== Draft Version Tracking ==============
 
 
 class DraftVersion(BaseModel):
@@ -97,9 +90,6 @@ class DraftHistory(BaseModel):
         if len(self.versions) >= 2:
             return self.versions[-2].content
         return None
-
-
-# ============== Quality Metrics ==============
 
 
 class SafetyScore(BaseModel):
@@ -150,10 +140,6 @@ class QualityMetrics(BaseModel):
         self.converged = safety_ok and empathy_ok
         return self.converged
 
-
-# ============== CBT Exercise Structure ==============
-
-
 class ExposureStep(BaseModel):
     """Single step in an exposure hierarchy."""
 
@@ -185,10 +171,6 @@ class CBTExercise(BaseModel):
     contraindications: list[str] = Field(default_factory=list)
     evidence_base: Optional[str] = None
 
-
-# ============== User Input ==============
-
-
 class UserRequest(BaseModel):
     """Parsed user input."""
 
@@ -197,10 +179,6 @@ class UserRequest(BaseModel):
     exercise_type: Optional[str] = None
     target_condition: Optional[str] = None
     additional_context: Optional[str] = None
-
-
-# ============== Human Review ==============
-
 
 class HumanReview(BaseModel):
     """Human reviewer's input."""
@@ -213,8 +191,6 @@ class HumanReview(BaseModel):
     awaiting_review: bool = False
 
 
-# ============== Workflow Stage ==============
-
 WorkflowStage = Literal[
     "initializing",
     "drafting",
@@ -226,9 +202,6 @@ WorkflowStage = Literal[
     "approved",
     "rejected",
 ]
-
-
-# ============== Main Blackboard State ==============
 
 
 class BlackboardState(BaseModel):

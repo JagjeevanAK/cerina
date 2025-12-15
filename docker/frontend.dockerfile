@@ -6,8 +6,6 @@ COPY frontend/package.json frontend/bun.lock ./
 
 RUN bun install --frozen-lockfile
 
-COPY --from=deps /app/node_modules ./node_modules
-
 COPY frontend/ ./
 
 ARG NEXT_PUBLIC_API_URL

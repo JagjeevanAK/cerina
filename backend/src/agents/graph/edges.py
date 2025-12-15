@@ -93,7 +93,6 @@ def supervisor_router(
         logger.info("routing_decision", thread_id=thread_id, from_stage=stage, to_node="end", reason=f"Terminal state: {stage}")
         return "end"
 
-    # Default - go to human review for safety
     logger.info("routing_decision", thread_id=thread_id, from_stage=stage, to_node="human_review", reason="Default routing for safety")
     return "human_review"
 

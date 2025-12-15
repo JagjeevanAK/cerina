@@ -24,7 +24,6 @@ class CerinaClient:
 
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None:
-            # Long timeout for workflow operations that can take several minutes
             self._client = httpx.AsyncClient(timeout=httpx.Timeout(600.0, connect=30.0))
         return self._client
 

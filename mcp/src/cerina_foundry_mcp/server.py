@@ -30,7 +30,12 @@ The system uses specialized AI agents to:
 3. Evaluate clinical accuracy and empathy (Clinical Critic)
 4. Format the final artifact (Finalizer)
 
-IMPORTANT: When this tool returns an exercise, you MUST display the COMPLETE exercise content to the user, including ALL steps with their descriptions, SUDS anxiety ratings, coping strategies, safety notes, and contraindications. Do NOT summarize - show the full formatted exercise as returned.
+IMPORTANT DISPLAY INSTRUCTIONS:
+- When this tool returns an exercise, you MUST create an ARTIFACT to display the COMPLETE exercise content in the sidebar panel.
+- Use artifact type "text/markdown" with a descriptive title like "CBT Exercise: [condition]"
+- Include ALL steps with their descriptions, SUDS anxiety ratings (0-100), coping strategies, duration, safety notes, and contraindications.
+- Do NOT summarize or truncate - show the FULL formatted exercise exactly as returned.
+- The artifact allows users to easily copy, reference, and save the exercise.
 
 By default, exercises require human approval via the React Dashboard. Set auto_approve=true to bypass review (use with caution).""",
         inputSchema={

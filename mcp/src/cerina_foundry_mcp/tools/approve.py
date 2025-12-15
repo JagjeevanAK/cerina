@@ -26,7 +26,6 @@ async def approve_exercise(
     client = CerinaClient()
 
     try:
-        # First check if session is actually awaiting review
         state = await client.get_session(session_id)
 
         if not state.awaiting_human_input:
@@ -39,7 +38,6 @@ async def approve_exercise(
                 )
             ]
 
-        # Submit approval
         review = ReviewRequest(
             decision="approve",
             feedback=feedback or "Approved via MCP tool",
@@ -48,7 +46,6 @@ async def approve_exercise(
 
         await client.submit_review(session_id, review)
 
-        # Get the final state
         final_state = await client.get_session(session_id)
 
         if final_state.final_exercise:

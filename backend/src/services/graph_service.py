@@ -27,7 +27,6 @@ class GraphService:
             logger.info("workflow_init_start", database_url=self.database_url[:40] + "...")
             os.environ["DATABASE_URL"] = self.database_url
 
-            # Import from local agents package
             from src.agents.graph.builder import CBTWorkflow
             from src.agents.graph.checkpointer import get_checkpointer
 

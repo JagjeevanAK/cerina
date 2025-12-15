@@ -46,20 +46,16 @@ def build_graph(
     Returns:
         Compiled StateGraph ready for execution
     """
-    # Create the graph with GraphState
     workflow = StateGraph(GraphState)
 
-    # Add nodes
     workflow.add_node("draftsman", draftsman_node)
     workflow.add_node("safety_guardian", safety_guardian_node)
     workflow.add_node("clinical_critic", clinical_critic_node)
     workflow.add_node("finalizer", finalizer_node)
     workflow.add_node("human_review", human_review_node)
 
-    # Set entry point
     workflow.set_entry_point("draftsman")
 
-    # Add edges with conditional routing
     workflow.add_conditional_edges(
         "draftsman",
         after_draftsman,
@@ -105,7 +101,6 @@ def build_graph(
         },
     )
 
-    # Compile the graph
     if checkpointer:
         return workflow.compile(checkpointer=checkpointer)
     return workflow.compile()

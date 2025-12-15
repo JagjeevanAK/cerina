@@ -141,10 +141,8 @@ async def get_session(
     if not db_session:
         raise HTTPException(status_code=404, detail="Session not found")
 
-    # Get current state from LangGraph
     state = await graph_service.get_state(db_session.thread_id)
 
-    # Build quality metrics
     quality_metrics = QualityMetricsResponse(
         safety_score=None,
         safety_passed=None,
