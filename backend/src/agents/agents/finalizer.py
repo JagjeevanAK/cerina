@@ -55,16 +55,7 @@ Output ONLY the JSON object, no additional text."""
         return {
             "final_exercise": final_exercise,
             "scratchpads": {self.agent_id: scratchpad},
-            "workflow_stage": "human_review",
-            "human_review": {
-                "reviewer_id": None,
-                "decision": None,
-                "edits": None,
-                "feedback": None,
-                "reviewed_at": None,
-                "awaiting_review": True,
-            },
-            "awaiting_human_input": True,
+            "workflow_stage": "refinement", 
         }
 
     def _parse_exercise_json(self, response: str, state: GraphState) -> dict:

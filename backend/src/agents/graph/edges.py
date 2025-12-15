@@ -15,14 +15,19 @@ def supervisor_router(
     "draftsman",
     "safety_guardian",
     "clinical_critic",
-    "finalizer",
+    "refinement",
     "human_review",
     "end",
 ]:
     """
-    Determine the next node based on current state.
+    Central routing function for the Supervisor Agent.
 
-    This is the main routing function used by the supervisor pattern.
+    The Supervisor is the brain of the operation:
+    1. Interprets user request
+    2. Assigns tasks to specialist agents
+    3. Collects feedback & decides if revision is needed
+    4. Stops when quality threshold is met
+    5. Fails safe → blocked output if safety concerns
     """
     stage = state.get("workflow_stage", "initializing")
     quality_metrics = state.get("quality_metrics", {})
@@ -34,66 +39,80 @@ def supervisor_router(
 
     thread_id = state.get("thread_id", "unknown")
 
-    # Initial state - start with drafting
-    if stage == "initializing":
-        logger.info("routing_decision", thread_id=thread_id, from_stage=stage, to_node="draftsman", reason="Initial state - starting draft")
-        return "draftsman"
+    if safety.get("crisis_escalation_needed", False):
+        logger.warning(
+            "supervisor_fail_safe",
+            thread_id=thread_id,
+            reason="Critical safety concern - blocking output and escalating to human",
+            safety_score=safety.get("overall_safety_score", 0),
+        )
+        return "human_review"
 
-    # After safety review
+    if stage == "initializing":
+        logger.info("supervisor_routing", thread_id=thread_id, from_stage=stage, to_node="draftsman", reason="Initial state - starting draft")
+        return "draftsman"
+    elif stage == "drafting":
+        logger.info("supervisor_routing", thread_id=thread_id, from_stage=stage, to_node="safety_guardian", reason="Draft complete - safety review needed")
+        return "safety_guardian"
+
     elif stage == "safety_review":
         if not safety.get("passed", False):
             if iteration >= max_iterations:
-                logger.info("routing_decision", thread_id=thread_id, from_stage=stage, to_node="human_review", reason=f"Safety failed, max iterations ({max_iterations}) reached")
+                logger.info("supervisor_routing", thread_id=thread_id, from_stage=stage, to_node="human_review", reason=f"Safety failed, max iterations ({max_iterations}) reached")
                 return "human_review"
-            logger.info("routing_decision", thread_id=thread_id, from_stage=stage, to_node="draftsman", reason=f"Safety failed, revision needed (iteration {iteration}/{max_iterations})")
+            logger.info("supervisor_routing", thread_id=thread_id, from_stage=stage, to_node="draftsman", reason=f"Safety failed, revision needed (iteration {iteration}/{max_iterations})")
             return "draftsman"
-        logger.info("routing_decision", thread_id=thread_id, from_stage=stage, to_node="clinical_critic", reason="Safety passed")
+        logger.info("supervisor_routing", thread_id=thread_id, from_stage=stage, to_node="clinical_critic", reason="Safety passed - clinical review next")
         return "clinical_critic"
 
-    # After clinical review
     elif stage == "clinical_review":
         if not empathy.get("passed", False):
             if iteration >= max_iterations:
-                logger.info("routing_decision", thread_id=thread_id, from_stage=stage, to_node="human_review", reason=f"Empathy failed, max iterations ({max_iterations}) reached")
+                logger.info("supervisor_routing", thread_id=thread_id, from_stage=stage, to_node="human_review", reason=f"Empathy failed, max iterations ({max_iterations}) reached")
                 return "human_review"
-            logger.info("routing_decision", thread_id=thread_id, from_stage=stage, to_node="draftsman", reason=f"Empathy failed, revision needed (iteration {iteration}/{max_iterations})")
+            logger.info("supervisor_routing", thread_id=thread_id, from_stage=stage, to_node="draftsman", reason=f"Empathy failed, revision needed (iteration {iteration}/{max_iterations})")
             return "draftsman"
-        logger.info("routing_decision", thread_id=thread_id, from_stage=stage, to_node="finalizer", reason="Both safety and empathy passed")
-        return "finalizer"
+        logger.info("supervisor_routing", thread_id=thread_id, from_stage=stage, to_node="refinement", reason="All reviews passed - proceeding to refinement")
+        return "refinement"
 
-    # Revision stage - route back to safety review
     elif stage == "revising":
-        logger.info("routing_decision", thread_id=thread_id, from_stage=stage, to_node="safety_guardian", reason="Revision complete, re-checking safety")
+        logger.info("supervisor_routing", thread_id=thread_id, from_stage=stage, to_node="safety_guardian", reason="Revision complete, re-checking safety")
         return "safety_guardian"
 
-    # After finalization - human review
+    # After refinement - human review
+    elif stage == "refinement":
+        logger.info("supervisor_routing", thread_id=thread_id, from_stage=stage, to_node="human_review", reason="Refinement complete, awaiting human review")
+        return "human_review"
+    
+    # Legacy: finalizing stage (backward compatibility)
     elif stage == "finalizing":
-        logger.info("routing_decision", thread_id=thread_id, from_stage=stage, to_node="human_review", reason="Finalization complete, awaiting human review")
+        logger.info("supervisor_routing", thread_id=thread_id, from_stage=stage, to_node="human_review", reason="Finalization complete, awaiting human review")
         return "human_review"
 
-    # Human review outcomes
+    # Human review outcomes (after human makes a decision)
     elif stage == "human_review":
         human_review = state.get("human_review", {})
         decision = human_review.get("decision")
 
         if decision == "approve":
-            logger.info("routing_decision", thread_id=thread_id, from_stage=stage, to_node="end", reason="Human approved - workflow complete")
+            logger.info("supervisor_routing", thread_id=thread_id, from_stage=stage, to_node="end", reason="Human approved - workflow complete")
             return "end"
         elif decision == "reject":
-            logger.info("routing_decision", thread_id=thread_id, from_stage=stage, to_node="end", reason="Human rejected - workflow complete")
+            logger.info("supervisor_routing", thread_id=thread_id, from_stage=stage, to_node="end", reason="Human rejected - workflow complete")
             return "end"
         elif decision == "edit":
-            logger.info("routing_decision", thread_id=thread_id, from_stage=stage, to_node="safety_guardian", reason="Human made edits - re-reviewing")
+            logger.info("supervisor_routing", thread_id=thread_id, from_stage=stage, to_node="safety_guardian", reason="Human made edits - re-reviewing from safety")
             return "safety_guardian"
-        logger.info("routing_decision", thread_id=thread_id, from_stage=stage, to_node="human_review", reason="Awaiting human decision")
+        # Still waiting for human input
+        logger.info("supervisor_routing", thread_id=thread_id, from_stage=stage, to_node="human_review", reason="Awaiting human decision")
         return "human_review"
 
     # Terminal states
     elif stage in ["approved", "rejected"]:
-        logger.info("routing_decision", thread_id=thread_id, from_stage=stage, to_node="end", reason=f"Terminal state: {stage}")
+        logger.info("supervisor_routing", thread_id=thread_id, from_stage=stage, to_node="end", reason=f"Terminal state: {stage}")
         return "end"
 
-    logger.info("routing_decision", thread_id=thread_id, from_stage=stage, to_node="human_review", reason="Default routing for safety")
+    logger.info("supervisor_routing", thread_id=thread_id, from_stage=stage, to_node="human_review", reason="Default routing for safety")
     return "human_review"
 
 
@@ -228,8 +247,8 @@ def after_finalizer(state: GraphState) -> Literal["human_review"]:
 
 def after_human_review(
     state: GraphState,
-) -> Literal["safety_guardian", "end"]:
-    """Route after human review based on decision."""
+) -> Literal["supervisor", "end"]:
+    """Route after human review - back to supervisor or end."""
     thread_id = state.get("thread_id", "unknown")
     human_review = state.get("human_review", {})
     decision = human_review.get("decision")
@@ -239,10 +258,10 @@ def after_human_review(
             "edge_routing",
             thread_id=thread_id,
             from_node="human_review",
-            to_node="safety_guardian",
-            reason="Human made edits - re-running safety review",
+            to_node="supervisor",
+            reason="Human made edits - routing back to supervisor for re-review",
         )
-        return "safety_guardian"
+        return "supervisor"
 
     logger.info(
         "edge_routing",

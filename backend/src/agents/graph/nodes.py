@@ -173,13 +173,13 @@ async def clinical_critic_node(state: GraphState) -> dict[str, Any]:
 
 
 async def finalizer_node(state: GraphState) -> dict[str, Any]:
-    """Finalizer node - formats the final artifact."""
+    """Refinement node - formats the final artifact (formerly Finalizer)."""
     thread_id = state.get("thread_id", "unknown")
 
     logger.info(
-        "finalizer_start",
+        "refinement_start",
         thread_id=thread_id,
-        action="Formatting final CBT exercise artifact for human review",
+        action="Refining and formatting final CBT exercise artifact",
     )
 
     start_time = time.time()
@@ -189,12 +189,12 @@ async def finalizer_node(state: GraphState) -> dict[str, Any]:
 
     exercise = result.get("final_exercise", {})
     logger.info(
-        "finalizer_complete",
+        "refinement_complete",
         thread_id=thread_id,
         exercise_type=exercise.get("exercise_type", "unknown"),
         exercise_title=exercise.get("title", "untitled"),
         elapsed_seconds=round(elapsed, 2),
-        next_step="Human review required",
+        next_step="Returning to supervisor for human review routing",
     )
 
     return result

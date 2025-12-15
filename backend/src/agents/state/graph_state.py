@@ -40,6 +40,7 @@ class GraphState(TypedDict, total=False):
         "safety_review",
         "clinical_review",
         "revising",
+        "refinement",
         "finalizing",
         "human_review",
         "approved",

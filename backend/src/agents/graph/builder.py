@@ -9,13 +9,11 @@ from langgraph.graph import END, StateGraph
 
 from src.agents.state.graph_state import GraphState
 from src.agents.graph.edges import (
-    after_clinical,
-    after_draftsman,
-    after_finalizer,
+    supervisor_router,
     after_human_review,
-    after_safety,
 )
 from src.agents.graph.nodes import (
+    supervisor_node,
     clinical_critic_node,
     draftsman_node,
     finalizer_node,
@@ -32,13 +30,18 @@ def build_graph(
     """
     Build the CBT Clinical Review workflow graph.
 
-    The graph implements a Supervisor-Worker pattern:
-    1. Draftsman creates/revises CBT exercises
-    2. Safety Guardian reviews for safety concerns
-    3. Clinical Critic evaluates tone and empathy
-    4. If reviews fail, loop back to Draftsman
-    5. If reviews pass, Finalizer formats the artifact
-    6. Human review with interrupt for approval
+    The graph implements a Supervisor-Hub pattern where the Supervisor Agent
+    is the central orchestrator:
+    
+    1. Supervisor receives user request and routes to Draftsman
+    2. All workers (Draftsman, Safety Guardian, Clinical Critic) return to Supervisor
+    3. Supervisor collects feedback and decides next action:
+       - Route to next reviewer
+       - Loop back for revisions
+       - Proceed to Refinement
+       - Fail safe and block output
+    4. Refinement Agent produces final output
+    5. Human review with interrupt for approval
 
     Args:
         checkpointer: Optional checkpointer for persistence
@@ -48,55 +51,38 @@ def build_graph(
     """
     workflow = StateGraph(GraphState)
 
+    workflow.add_node("supervisor", supervisor_node)
     workflow.add_node("draftsman", draftsman_node)
     workflow.add_node("safety_guardian", safety_guardian_node)
     workflow.add_node("clinical_critic", clinical_critic_node)
-    workflow.add_node("finalizer", finalizer_node)
+    workflow.add_node("refinement", finalizer_node)
     workflow.add_node("human_review", human_review_node)
 
-    workflow.set_entry_point("draftsman")
+    workflow.set_entry_point("supervisor")
 
     workflow.add_conditional_edges(
-        "draftsman",
-        after_draftsman,
+        "supervisor",
+        supervisor_router,
         {
+            "draftsman": "draftsman",
             "safety_guardian": "safety_guardian",
-        },
-    )
-
-    workflow.add_conditional_edges(
-        "safety_guardian",
-        after_safety,
-        {
             "clinical_critic": "clinical_critic",
-            "draftsman": "draftsman",
+            "refinement": "refinement",
             "human_review": "human_review",
+            "end": END,
         },
     )
 
-    workflow.add_conditional_edges(
-        "clinical_critic",
-        after_clinical,
-        {
-            "finalizer": "finalizer",
-            "draftsman": "draftsman",
-            "human_review": "human_review",
-        },
-    )
-
-    workflow.add_conditional_edges(
-        "finalizer",
-        after_finalizer,
-        {
-            "human_review": "human_review",
-        },
-    )
+    workflow.add_edge("draftsman", "supervisor")
+    workflow.add_edge("safety_guardian", "supervisor")
+    workflow.add_edge("clinical_critic", "supervisor")
+    workflow.add_edge("refinement", "supervisor")
 
     workflow.add_conditional_edges(
         "human_review",
         after_human_review,
         {
-            "safety_guardian": "safety_guardian",
+            "supervisor": "supervisor",
             "end": END,
         },
     )
