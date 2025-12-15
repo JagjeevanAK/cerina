@@ -38,13 +38,25 @@ def supervisor_router(
     empathy = quality_metrics.get("empathy", {})
 
     thread_id = state.get("thread_id", "unknown")
+    safety_score = safety.get("overall_safety_score", 1.0)
 
-    if safety.get("crisis_escalation_needed", False):
+    if safety_score < 0.3:
+        logger.error(
+            "supervisor_critical_safety_block",
+            thread_id=thread_id,
+            reason="Safety score critically low - blocking output",
+            safety_score=safety_score,
+        )
+        return "end"
+
+    crisis_needed = safety.get("crisis_escalation_needed", False)
+    safety_failed = safety_score < 0.8 or not safety.get("passed", True)
+    if crisis_needed and safety_failed:
         logger.warning(
             "supervisor_fail_safe",
             thread_id=thread_id,
-            reason="Critical safety concern - blocking output and escalating to human",
-            safety_score=safety.get("overall_safety_score", 0),
+            reason="Crisis concern detected - routing to human review",
+            safety_score=safety_score,
         )
         return "human_review"
 

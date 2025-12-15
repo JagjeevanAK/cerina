@@ -145,7 +145,7 @@ class SessionService:
         elif stage == "rejected":
             session.status = "rejected"
             session.completed_at = datetime.utcnow()
-        elif state.get("awaiting_human_input"):
+        elif stage in ("refinement", "human_review") or state.get("awaiting_human_input"):
             session.status = "awaiting_review"
 
         session.updated_at = datetime.utcnow()

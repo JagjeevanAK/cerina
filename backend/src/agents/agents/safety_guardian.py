@@ -86,16 +86,10 @@ Format your response as:
             "reviewed": True,
         }
 
-        # Determine next stage
-        if safety_metrics["passed"]:
-            next_stage = "clinical_review"
-        else:
-            next_stage = "revising"
-
         return {
             "quality_metrics": quality_metrics,
             "scratchpads": {self.agent_id: scratchpad},
-            "workflow_stage": next_stage,
+            "workflow_stage": "safety_review", 
         }
 
     def _parse_safety_response(self, response: str) -> dict:

@@ -111,16 +111,10 @@ Score: [0-1]
         converged = safety_passed and empathy_passed
         quality_metrics["converged"] = converged
 
-        # Determine next stage
-        if converged:
-            next_stage = "finalizing"
-        else:
-            next_stage = "revising"
-
         return {
             "quality_metrics": quality_metrics,
             "scratchpads": {self.agent_id: scratchpad},
-            "workflow_stage": next_stage,
+            "workflow_stage": "clinical_review", 
         }
 
     def _parse_empathy_response(self, response: str) -> dict:

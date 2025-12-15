@@ -106,7 +106,7 @@ class DraftsmanAgent(BaseAgent):
             "current_draft": response,
             "draft_history": draft_history,
             "scratchpads": {self.agent_id: scratchpad},
-            "workflow_stage": "safety_review",
+            "workflow_stage": "drafting", 
             "user_request": user_request_update,
             "iteration_count": iteration + 1,
         }
