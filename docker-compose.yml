@@ -24,26 +24,13 @@ services:
       context: .
       dockerfile: docker/backend.dockerfile
     container_name: cerina-backend
+    env_file:
+      - .env
     environment:
       - DATABASE_URL=postgresql+asyncpg://cerina:cerina_dev_password@postgres:5432/cerina
       - AGENTS_DATABASE_URL=postgresql://cerina:cerina_dev_password@postgres:5432/cerina
-      - CORS_ORIGINS=["http://localhost:3000","http://frontend:3000"]
-      - DEBUG=false
-      - LOG_LEVEL=INFO
-      # LLM settings - pass from host environment or .env file
-      - LLM_PROVIDER=${LLM_PROVIDER:-anthropic}
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
-      - ANTHROPIC_MODEL=${ANTHROPIC_MODEL:-claude-sonnet-4-20250514}
-      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o}
-      - OPENROUTER_MODEL=${OPENROUTER_MODEL:-anthropic/claude-sonnet-4-20250514}
-      # LangSmith (optional)
-      - LANGCHAIN_TRACING_V2=${LANGCHAIN_TRACING_V2:-false}
-      - LANGCHAIN_API_KEY=${LANGCHAIN_API_KEY}
-      - LANGCHAIN_PROJECT=${LANGCHAIN_PROJECT:-cerina-cbt-agents}
     ports:
-      - "8000:8000"
+      - "0.0.0.0:8000:8000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -61,10 +48,10 @@ services:
       context: .
       dockerfile: docker/frontend.dockerfile
       args:
-        - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8000/api/v1}
     container_name: cerina-frontend
-    environment:
-      - NODE_ENV=production
+    env_file:
+      - .env
     ports:
       - "3000:3000"
     depends_on:

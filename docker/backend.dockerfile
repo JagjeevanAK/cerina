@@ -1,54 +1,50 @@
-# Backend Dockerfile for Cerina CBT API
-# Uses multi-stage build for smaller production image
-
-# Build stage
-FROM python:3.13-slim AS builder
+FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim AS builder
 
 WORKDIR /app
 
-# Install uv for fast dependency management
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy dependency files
-COPY backend/pyproject.toml backend/uv.lock ./
+COPY backend/pyproject.toml ./pyproject.toml
+COPY backend/uv.lock ./uv.lock
 
-# Install dependencies into a virtual environment
-RUN uv sync --frozen --no-dev --no-install-project
+ENV UV_COMPILE_BYTECODE=1
+ENV UV_LINK_MODE=copy
 
-# Production stage
-FROM python:3.13-slim AS production
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev --no-install-project
+
+FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim AS production
 
 WORKDIR /app
 
-# Install runtime dependencies for psycopg2
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq5 \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user for security
 RUN useradd --create-home --shell /bin/bash appuser
 
 # Copy virtual environment from builder
-COPY --from=builder /app/.venv /app/.venv
+COPY --from=builder --chown=appuser:appuser /app/.venv /app/.venv
 
-# Copy application code
-COPY backend/src ./src
+# Copy application code with correct ownership
+COPY --chown=appuser:appuser backend/src ./src
 
-# Set environment variables
 ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONPATH="/app"
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
+ENV UV_COMPILE_BYTECODE=1
 
-# Switch to non-root user
 USER appuser
 
-# Expose port
 EXPOSE 8000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
 
-# Run the application
 CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
