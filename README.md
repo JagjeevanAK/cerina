@@ -1,6 +1,3 @@
-# Cerina
-
-A multi-agent system for generating safe, clinically sound Cognitive Behavioral Therapy (CBT) exercises through autonomous agent collaboration and human review.
 
 ## Overview
 
