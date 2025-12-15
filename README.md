@@ -21,6 +21,50 @@ The system consists of three main components:
 - **Backend API** - FastAPI REST service with PostgreSQL persistence
 - **Frontend Dashboard** - Next.js web interface for session management
 
+```mermaid
+graph LR
+    subgraph Clients
+        CLAUDE["Claude Desktop<br/>(MCP Client)"]
+        REACT["React UI<br/>(Browser)"]
+    end
+    
+    CLAUDE -->|MCP Protocol| MCP["MCP Server<br/>(cerina-foundry)"]
+    REACT -->|HTTP| API["FastAPI<br/>Backend"]
+    MCP --> API
+    
+    API --> LG
+    
+    subgraph LG["LangGraph Workflow"]
+        direction TB
+        DRAFT["Draftsman"]
+        SAFETY["Safety Guard"]
+        CRITIC["Critic"]
+        FINAL["Finalizer"]
+    end
+```
+
+### Agentic Workflow
+
+```mermaid
+graph TD
+    SUP["SUPERVISOR AGENT"] --> DRAFT["Draftsman"]
+    SUP --> SAFETY["Safety Guardian"]
+    SUP --> CLINICAL["Clinical Critic"]
+    
+    DRAFT --> SUP
+    SAFETY --> SUP
+    CLINICAL --> SUP
+    
+    SUP --> REFINE["Refinement Agent"]
+    REFINE --> SUP
+    
+    SUP --> HUMAN["Human Review"]
+    
+    HUMAN -->|approve| APPROVED["Approved"]
+    HUMAN -->|reject| REJECTED["Rejected"]
+    HUMAN -->|edit| SUP
+```
+
 ## Getting Started
 
 ### Requirements
