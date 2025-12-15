@@ -43,7 +43,7 @@ const stages = [
   {
     id: "safety_review" as const,
     label: "Safety Guardian",
-    description: "Checking safety",
+    description: "Checking safety concerns",
     icon: Shield,
     activeColor: "text-stage-safety-review",
     activeBg: "bg-stage-safety-review/10",
@@ -53,7 +53,7 @@ const stages = [
   {
     id: "clinical_review" as const,
     label: "Clinical Critic",
-    description: "Evaluating empathy",
+    description: "Evaluating tone & empathy",
     icon: Heart,
     activeColor: "text-stage-clinical-review",
     activeBg: "bg-stage-clinical-review/10",
@@ -101,7 +101,7 @@ function getStageState(
     return "complete";
   }
 
-  // Handle revising stage - it's between clinical_review and drafting
+  // Handle revising stage - it's between reviews and drafting
   if (currentStage === "revising") {
     if (stageId === "drafting") return "active";
     if (stageId === "initializing") return "complete";
@@ -166,8 +166,8 @@ export function AgentPipeline({
                   <span
                     className={cn(
                       "block text-sm font-medium transition-colors duration-300",
-                      state === "active" ? stage.activeColor : 
-                      state === "complete" ? "text-emerald-600 dark:text-emerald-400" : 
+                      state === "active" ? stage.activeColor :
+                      state === "complete" ? "text-emerald-600 dark:text-emerald-400" :
                       "text-muted-foreground"
                     )}
                   >
@@ -242,8 +242,8 @@ export function AgentPipeline({
                   <span
                     className={cn(
                       "block text-sm font-medium transition-colors duration-300",
-                      state === "active" ? stage.activeColor : 
-                      state === "complete" ? "text-emerald-600 dark:text-emerald-400" : 
+                      state === "active" ? stage.activeColor :
+                      state === "complete" ? "text-emerald-600 dark:text-emerald-400" :
                       "text-muted-foreground"
                     )}
                   >

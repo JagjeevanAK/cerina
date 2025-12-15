@@ -14,14 +14,11 @@ from .tools import (
     approve_exercise,
 )
 
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Create the MCP server
 server = Server("cerina-foundry")
 
-# Define tools
 TOOLS = [
     Tool(
         name="create_cbt_exercise",
@@ -32,6 +29,8 @@ The system uses specialized AI agents to:
 2. Review for safety concerns (Safety Guardian)
 3. Evaluate clinical accuracy and empathy (Clinical Critic)
 4. Format the final artifact (Finalizer)
+
+IMPORTANT: When this tool returns an exercise, you MUST display the COMPLETE exercise content to the user, including ALL steps with their descriptions, SUDS anxiety ratings, coping strategies, safety notes, and contraindications. Do NOT summarize - show the full formatted exercise as returned.
 
 By default, exercises require human approval via the React Dashboard. Set auto_approve=true to bypass review (use with caution).""",
         inputSchema={

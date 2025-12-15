@@ -13,16 +13,14 @@ from .settings import get_settings
 
 settings = get_settings()
 
-# Create async engine
 engine = create_async_engine(
     settings.database_url,
-    echo=settings.debug,
+    echo=False,  # Disable SQL query logging
     pool_pre_ping=True,
     pool_size=5,
     max_overflow=10,
 )
 
-# Create async session maker
 async_session_maker = async_sessionmaker(
     engine,
     class_=AsyncSession,

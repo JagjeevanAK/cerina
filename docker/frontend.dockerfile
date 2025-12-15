@@ -1,37 +1,20 @@
-# Frontend Dockerfile for Cerina Next.js App
-# Uses multi-stage build for smaller production image
-
-# Dependencies stage
-FROM oven/bun:1 AS deps
-
-WORKDIR /app
-
-# Copy package files
-COPY frontend/package.json frontend/bun.lock ./
-
-# Install dependencies
-RUN bun install --frozen-lockfile
-
-# Build stage
 FROM oven/bun:1 AS builder
 
 WORKDIR /app
 
-# Copy dependencies from deps stage
+COPY frontend/package.json frontend/bun.lock ./
+
+RUN bun install --frozen-lockfile
+
 COPY --from=deps /app/node_modules ./node_modules
 
-# Copy source code
 COPY frontend/ ./
 
-# Set build-time environment variables
 ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 
-# Build the application
-ENV NEXT_TELEMETRY_DISABLED=1
 RUN bun run build
 
-# Production stage - use Node.js for running Next.js
 FROM node:20-alpine AS production
 
 WORKDIR /app

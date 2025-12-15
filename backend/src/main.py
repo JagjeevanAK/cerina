@@ -24,6 +24,10 @@ def setup_logging():
         stream=sys.stdout,
         level=log_level,
     )
+    
+    # Silence noisy loggers
+    logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
+    logging.getLogger("uvicorn.access").setLevel(logging.WARNING)
 
     processors = [
         structlog.contextvars.merge_contextvars,

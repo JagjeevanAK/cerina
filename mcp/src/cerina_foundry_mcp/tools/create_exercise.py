@@ -127,10 +127,16 @@ def _format_exercise(exercise: dict[str, Any]) -> str:
         for i, step in enumerate(exercise["steps"], 1):
             step_text = f"{i}. {step.get('description', '')}"
             parts.append(step_text)
-            if step.get("anxiety_rating"):
-                parts.append(f"   - Anxiety Rating: {step['anxiety_rating']}/10")
-            if step.get("duration"):
+            if step.get("anxiety_rating") is not None:
+                # SUDS (Subjective Units of Distress Scale) is 0-100
+                rating = step["anxiety_rating"]
+                parts.append(f"   - SUDS Anxiety Level: {rating}/100")
+            if step.get("duration_minutes"):
+                parts.append(f"   - Duration: {step['duration_minutes']} minutes")
+            elif step.get("duration"):
                 parts.append(f"   - Duration: {step['duration']}")
+            if step.get("coping_strategies"):
+                parts.append(f"   - Coping Strategies: {', '.join(step['coping_strategies'])}")
         parts.append("")
 
     if exercise.get("safety_notes"):
