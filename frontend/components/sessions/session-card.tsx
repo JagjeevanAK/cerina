@@ -5,7 +5,6 @@ import { formatDistanceToNow } from "date-fns";
 import { Clock, ArrowRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 import type { Session, SessionStatus, WorkflowStage } from "@/types/session";
 
 interface SessionCardProps {
@@ -25,10 +24,12 @@ const statusConfig: Record<
 
 const stageLabels: Record<WorkflowStage, string> = {
   initializing: "Initializing",
+  supervisor: "Supervisor",
   drafting: "Drafting",
   safety_review: "Safety Review",
   clinical_review: "Clinical Review",
   revising: "Revising",
+  refinement: "Refining",
   finalizing: "Finalizing",
   human_review: "Human Review",
   approved: "Approved",
