@@ -9,6 +9,7 @@ import {
   Loader2,
   Check,
   X,
+  Brain,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { WorkflowStage } from "@/types/session";
@@ -29,6 +30,16 @@ const stages = [
     activeBg: "bg-stage-initializing/10",
     activeBorder: "border-stage-initializing",
     activeGlow: "shadow-stage-initializing/25",
+  },
+  {
+    id: "supervisor" as const,
+    label: "Supervisor",
+    description: "Orchestrating workflow",
+    icon: Brain,
+    activeColor: "text-violet-500",
+    activeBg: "bg-violet-500/10",
+    activeBorder: "border-violet-500",
+    activeGlow: "shadow-violet-500/25",
   },
   {
     id: "drafting" as const,
@@ -61,7 +72,7 @@ const stages = [
     activeGlow: "shadow-stage-clinical-review/25",
   },
   {
-    id: "finalizing" as const,
+    id: "refinement" as const,
     label: "Finalizer",
     description: "Formatting output",
     icon: CheckCircle,
@@ -167,8 +178,8 @@ export function AgentPipeline({
                     className={cn(
                       "block text-sm font-medium transition-colors duration-300",
                       state === "active" ? stage.activeColor :
-                      state === "complete" ? "text-emerald-600 dark:text-emerald-400" :
-                      "text-muted-foreground"
+                        state === "complete" ? "text-emerald-600 dark:text-emerald-400" :
+                          "text-muted-foreground"
                     )}
                   >
                     {stage.label}
@@ -243,8 +254,8 @@ export function AgentPipeline({
                     className={cn(
                       "block text-sm font-medium transition-colors duration-300",
                       state === "active" ? stage.activeColor :
-                      state === "complete" ? "text-emerald-600 dark:text-emerald-400" :
-                      "text-muted-foreground"
+                        state === "complete" ? "text-emerald-600 dark:text-emerald-400" :
+                          "text-muted-foreground"
                     )}
                   >
                     {stage.label}

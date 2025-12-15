@@ -2,10 +2,12 @@
 
 export type WorkflowStage =
   | "initializing"
+  | "supervisor"
   | "drafting"
   | "safety_review"
   | "clinical_review"
   | "revising"
+  | "refinement"
   | "finalizing"
   | "human_review"
   | "approved"
