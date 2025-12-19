@@ -1,6 +1,6 @@
 [project]
-name = "cerina-foundry-mcp"
-version = "0.1.0"
+name = "cerina-mcp"
+version = "0.1.1"
 description = "MCP server for CBT Clinical Review Multi-Agent System"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -11,6 +11,9 @@ dependencies = [
     "pydantic-settings>=2.0.0",
     "python-dotenv>=1.0.0",
 ]
+[project.urls]
+Homepage = "https://github.com/jagjeevan/cerina"
+Issues = "https://github.com/jagjeevan/cerina/issues"
 
 [project.scripts]
 cerina-foundry = "cerina_foundry_mcp.server:main"

@@ -1,7 +1,8 @@
-# Cerina Foundry MCP Server
+# Cerina MCP Server
 
 MCP (Model Context Protocol) server that exposes the CBT Clinical Review Multi-Agent System as tools for AI assistants like Claude Desktop.
 
+Publish URL: https://pypi.org/project/cerina-mcp/
 ## Features
 
 - **create_cbt_exercise**: Create CBT exercises using the multi-agent workflow
@@ -26,10 +27,23 @@ uv sync
 
 Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
+### Daily Use
 ```json
 {
   "mcpServers": {
-    "cerina-foundry": {
+    "cerina-mcp": {
+      "command": "uvx",
+      "args": ["cerina-foundry"]
+    }
+  }
+}
+```
+
+### Development
+```json
+{
+  "mcpServers": {
+    "cerina-mcp": {
       "command": "uv",
       "args": [
         "--directory",
@@ -39,7 +53,6 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
       ],
       "env": {
         "CERINA_BACKEND_URL": "http://localhost:8000/api/v1",
-        "CERINA_AUTO_APPROVE": "false"
       }
     }
   }

@@ -1,4 +1,4 @@
-"""MCP Server for Cerina Foundry - CBT Clinical Review System."""
+"""MCP Server for Cerina - CBT Clinical Review System."""
 
 import asyncio
 import logging
